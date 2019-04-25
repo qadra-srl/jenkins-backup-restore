@@ -1,0 +1,17 @@
+
+node('master') {
+    try{
+        stage 'Download from S3'
+            withAWS(credentials:"${AWS_CREDENTIALS}", region: "${AWS_REGION}") {
+                s3Download(file:"${FILE_NAME}", bucket: "${S3_BUCKET}", path: "${FILE_NAME}", force:true)            
+            }
+
+            sh "tar -zvxf ${FILE_NAME} -C ${JENKINS_HOME}/${FILE_DESTINATION}"
+            sh "ls"
+            //sh "ls ${JENKINS_HOME}/${FILE_DESTINATION}"
+    }
+    catch(e){ throw e}
+    finally{
+        
+    }
+}
