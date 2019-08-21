@@ -22,20 +22,20 @@ node('master') {
             sh "rm -rf tmp"
             sh "rm -rf ${BACKUP_FOLDER}.tar.gz"
 
-        // stage "Remove old backup files"
-        //     withAWS(credentials:"${AWS_CREDENTIALS}", region: "${AWS_REGION}") {
-        //        files = s3FindFiles(bucket: "${S3_BUCKET}")
+         stage "Remove old backup files"
+             withAWS(credentials:"${AWS_CREDENTIALS}", region: "${AWS_REGION}") {
+                files = s3FindFiles(bucket: "${S3_BUCKET}")
 
-        //        def sortedFiles = sortFiles(files)
-        //        def filesToDelete = sortedFiles.size() - 10
-        //        for (file in sortedFiles) {
-        //             filesToDelete -= 1
+                def sortedFiles = sortFiles(files)
+                def filesToDelete = sortedFiles.size() - 30
+                for (file in sortedFiles) {
+                     filesToDelete -= 1
                     
-        //             if(filesToDelete >= 0){
-        //                 println "Deleting ${file.name} from S3"
-        //                 s3Delete(bucket:"${S3_BUCKET}", path:file.name)
-        //             }
-        //         }
-        //     }
+                     if(filesToDelete >= 0){
+                         println "Deleting ${file.name} from S3"
+                         s3Delete(bucket:"${S3_BUCKET}", path:file.name)
+                     }
+                 }
+             }
     }
 }
